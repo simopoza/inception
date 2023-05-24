@@ -1,63 +1,58 @@
-version: "3"
-#depend on 
+version: "3.8"
 volumes:
   mariadb:
     driver: local
     driver_opts:
-      device: ./data/mariadb
+        o: bind
+        type: none
+        device: ./home
   wordpress :
-    driver : local
-    driver_opts :
-      device : ./data/wordpress
+    driver: local
+    driver_opts:
+        o: bind
+        type: none
+        device : ./home
 networks:
   containes_net:
     driver: bridge
 services:
-    nginx:
-        depends_on:
-            - mariadb 
-        build:
-            context: ./requirements/nginx/
-        container_name: nginx
-        ports: 
-            - 443:443
-        restart: always
-        volumes:
-            - ./wordpress:/var/www/html
-        networks:
-            - containes_net
     mariadb:
+        container_name: mariadb
         build:
             context: ./requirements/mariadb/
             args:
-                DBname: poza
-                THE_USER: mannahri
+                DB_NAME: poza
+                DB_HOST: mariadb
+                DB_USER: mannahri
                 MARIADB_ROOT_PASSWORD: simopoza12345
-        container_name: mariadb
+        env_file: .env
         restart: always
         volumes:
-            - ./mariadb:/var/lib/mysql
+            - mariadb:/var/lib/mysql
         networks:
             - containes_net
     wordpress:
         depends_on:
             - mariadb 
+        container_name: wordpress
         build:
             context: ./requirements/wordpress/
-            args:
-                DB_NAME: poza
-                DB_USER: mannahri
-                DB_PASSWORD: simopoza12345
-                DB_HOST: simo
-                AD_USER: mannahri
-                AD_PASSWORD: onepieceisgoat123
-                email: mohammedannahri18@gmail.com
-                WP_USER: mannahri
-                WP_EMAIL:  mannahri@student.1337.ma
-                WP_PASSWORD: dimadimaraja123
-        container_name: wordpress
+        env_file: .env
         restart: always
         volumes:
-            - ./wordpress:/var/www/html
+            - wordpress:/var/www/html
+        networks:
+            - containes_net
+    nginx:
+        container_name: nginx
+        depends_on:
+            - wordpress
+        build:
+            context: ./requirements/nginx/
+        ports: 
+            - 443:443
+        restart: always
+        volumes:
+            - wordpress:/var/www/html
         networks:
             - containes_net
