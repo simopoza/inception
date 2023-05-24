@@ -1,7 +1,6 @@
 FROM debian:buster
 
-RUN apt update && \
-    apt install -y nginx
+RUN apt update && apt install -y nginx
 
 COPY ./certs/ .
 

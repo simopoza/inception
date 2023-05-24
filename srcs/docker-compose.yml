@@ -1,17 +1,17 @@
-version: "3.8"
+version: "3"
 volumes:
   mariadb:
     driver: local
     driver_opts:
         o: bind
         type: none
-        device: ./home
+        device: ${PWD}/data/db
   wordpress :
     driver: local
     driver_opts:
         o: bind
         type: none
-        device : ./home
+        device : ${PWD}/data/wp
 networks:
   containes_net:
     driver: bridge
