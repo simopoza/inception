@@ -5,27 +5,27 @@ volumes:
     driver_opts:
         o: bind
         type: none
-        device: ${PWD}/data/db
+        device: /home/mannahri/data/mariadb
   wordpress :
     driver: local
     driver_opts:
         o: bind
         type: none
-        device : ${PWD}/data/wp
+        device : /home/mannahri/data/wordpress
 networks:
   containes_net:
     driver: bridge
 services:
     mariadb:
         container_name: mariadb
+        env_file: .env
         build:
             context: ./requirements/mariadb/
             args:
-                DB_NAME: poza
-                DB_HOST: mariadb
-                DB_USER: mannahri
-                MARIADB_ROOT_PASSWORD: simopoza12345
-        env_file: .env
+                DB_NAME: ${DB_NAME}
+                DB_HOST: ${DB_HOST}
+                DB_USER: ${DB_USER}
+                MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
         restart: always
         volumes:
             - mariadb:/var/lib/mysql
